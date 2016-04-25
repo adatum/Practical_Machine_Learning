@@ -11,7 +11,7 @@
 
 <meta name="author" content="adatum" />
 
-<meta name="date" content="2016-04-22" />
+<meta name="date" content="2016-04-25" />
 
 <title>Practical Machine Learning:</title>
 
@@ -112,7 +112,7 @@ $(document).ready(function () {
 <h1 class="title">Practical Machine Learning:</h1>
 <h3 class="subtitle"><em>Weight Lifting Exercise Quality Classification</em></h3>
 <h4 class="author"><em>adatum</em></h4>
-<h4 class="date"><em>April 22, 2016</em></h4>
+<h4 class="date"><em>April 25, 2016</em></h4>
 
 </div>
 
@@ -123,8 +123,195 @@ $(document).ready(function () {
 <p>The <a href="http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises">Weight Lifting Exercises Dataset</a> aims to test the feasibility of assessing the quality of weight lifting exercises performed by inexperienced individuals, potentially as a precursor to personalized digital personal trainers. The data were collected by attaching orientation sensors on a dumbbell and the participant’s arm, forearm, and belt. They were then instructed to perform 10 sets of unilateral dumbbell biceps curls in one correct and four incorrect ways: “<em>exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E).</em>” More details are available at the <a href="http://groupware.les.inf.puc-rio.br/har">researchers’ website</a>.</p>
 <p>The goal is to develop machine learning algorithms which correctly classify the quality of the exercise performed given the sensor data. We show here an implementation achieving 99.69% overall classification accuracy.</p>
 </div>
-<div id="data-exploration" class="section level3">
-<h3>Data Exploration</h3>
+<div id="data-exploration-and-preprocessing" class="section level3">
+<h3>Data Exploration and Preprocessing</h3>
+<p>The training and testing data sets are downloaded and read, if not already present.</p>
+<pre class="r"><code>if(!exists(&quot;pml_training&quot;) &amp; !exists(&quot;pml_testing&quot;)){
+        training_file &lt;- &quot;pml-training.csv&quot;
+        testing_file &lt;- &quot;pml-testing.csv&quot;
+        
+        if(!file.exists(training_file) &amp; !file.exists(testing_file)){
+        training_url &lt;- &quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;
+        testing_url &lt;- &quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;
+        download.file(training_url, training_file, method = &quot;curl&quot;)
+        download.file(testing_url, testing_file, method = &quot;curl&quot;)
+        }
+        
+        pml_training &lt;- read.csv(&quot;pml-training.csv&quot;, na.strings = c(NA, &quot;&quot;))
+        pml_testing &lt;- read.csv(&quot;pml-testing.csv&quot;, na.strings = c(NA, &quot;&quot;))
+}
+
+dim(pml_training)</code></pre>
+<pre><code>## [1] 19622   160</code></pre>
+<pre class="r"><code>names(pml_training)</code></pre>
+<pre><code>##   [1] &quot;X&quot;                        &quot;user_name&quot;               
+##   [3] &quot;raw_timestamp_part_1&quot;     &quot;raw_timestamp_part_2&quot;    
+##   [5] &quot;cvtd_timestamp&quot;           &quot;new_window&quot;              
+##   [7] &quot;num_window&quot;               &quot;roll_belt&quot;               
+##   [9] &quot;pitch_belt&quot;               &quot;yaw_belt&quot;                
+##  [11] &quot;total_accel_belt&quot;         &quot;kurtosis_roll_belt&quot;      
+##  [13] &quot;kurtosis_picth_belt&quot;      &quot;kurtosis_yaw_belt&quot;       
+##  [15] &quot;skewness_roll_belt&quot;       &quot;skewness_roll_belt.1&quot;    
+##  [17] &quot;skewness_yaw_belt&quot;        &quot;max_roll_belt&quot;           
+##  [19] &quot;max_picth_belt&quot;           &quot;max_yaw_belt&quot;            
+##  [21] &quot;min_roll_belt&quot;            &quot;min_pitch_belt&quot;          
+##  [23] &quot;min_yaw_belt&quot;             &quot;amplitude_roll_belt&quot;     
+##  [25] &quot;amplitude_pitch_belt&quot;     &quot;amplitude_yaw_belt&quot;      
+##  [27] &quot;var_total_accel_belt&quot;     &quot;avg_roll_belt&quot;           
+##  [29] &quot;stddev_roll_belt&quot;         &quot;var_roll_belt&quot;           
+##  [31] &quot;avg_pitch_belt&quot;           &quot;stddev_pitch_belt&quot;       
+##  [33] &quot;var_pitch_belt&quot;           &quot;avg_yaw_belt&quot;            
+##  [35] &quot;stddev_yaw_belt&quot;          &quot;var_yaw_belt&quot;            
+##  [37] &quot;gyros_belt_x&quot;             &quot;gyros_belt_y&quot;            
+##  [39] &quot;gyros_belt_z&quot;             &quot;accel_belt_x&quot;            
+##  [41] &quot;accel_belt_y&quot;             &quot;accel_belt_z&quot;            
+##  [43] &quot;magnet_belt_x&quot;            &quot;magnet_belt_y&quot;           
+##  [45] &quot;magnet_belt_z&quot;            &quot;roll_arm&quot;                
+##  [47] &quot;pitch_arm&quot;                &quot;yaw_arm&quot;                 
+##  [49] &quot;total_accel_arm&quot;          &quot;var_accel_arm&quot;           
+##  [51] &quot;avg_roll_arm&quot;             &quot;stddev_roll_arm&quot;         
+##  [53] &quot;var_roll_arm&quot;             &quot;avg_pitch_arm&quot;           
+##  [55] &quot;stddev_pitch_arm&quot;         &quot;var_pitch_arm&quot;           
+##  [57] &quot;avg_yaw_arm&quot;              &quot;stddev_yaw_arm&quot;          
+##  [59] &quot;var_yaw_arm&quot;              &quot;gyros_arm_x&quot;             
+##  [61] &quot;gyros_arm_y&quot;              &quot;gyros_arm_z&quot;             
+##  [63] &quot;accel_arm_x&quot;              &quot;accel_arm_y&quot;             
+##  [65] &quot;accel_arm_z&quot;              &quot;magnet_arm_x&quot;            
+##  [67] &quot;magnet_arm_y&quot;             &quot;magnet_arm_z&quot;            
+##  [69] &quot;kurtosis_roll_arm&quot;        &quot;kurtosis_picth_arm&quot;      
+##  [71] &quot;kurtosis_yaw_arm&quot;         &quot;skewness_roll_arm&quot;       
+##  [73] &quot;skewness_pitch_arm&quot;       &quot;skewness_yaw_arm&quot;        
+##  [75] &quot;max_roll_arm&quot;             &quot;max_picth_arm&quot;           
+##  [77] &quot;max_yaw_arm&quot;              &quot;min_roll_arm&quot;            
+##  [79] &quot;min_pitch_arm&quot;            &quot;min_yaw_arm&quot;             
+##  [81] &quot;amplitude_roll_arm&quot;       &quot;amplitude_pitch_arm&quot;     
+##  [83] &quot;amplitude_yaw_arm&quot;        &quot;roll_dumbbell&quot;           
+##  [85] &quot;pitch_dumbbell&quot;           &quot;yaw_dumbbell&quot;            
+##  [87] &quot;kurtosis_roll_dumbbell&quot;   &quot;kurtosis_picth_dumbbell&quot; 
+##  [89] &quot;kurtosis_yaw_dumbbell&quot;    &quot;skewness_roll_dumbbell&quot;  
+##  [91] &quot;skewness_pitch_dumbbell&quot;  &quot;skewness_yaw_dumbbell&quot;   
+##  [93] &quot;max_roll_dumbbell&quot;        &quot;max_picth_dumbbell&quot;      
+##  [95] &quot;max_yaw_dumbbell&quot;         &quot;min_roll_dumbbell&quot;       
+##  [97] &quot;min_pitch_dumbbell&quot;       &quot;min_yaw_dumbbell&quot;        
+##  [99] &quot;amplitude_roll_dumbbell&quot;  &quot;amplitude_pitch_dumbbell&quot;
+## [101] &quot;amplitude_yaw_dumbbell&quot;   &quot;total_accel_dumbbell&quot;    
+## [103] &quot;var_accel_dumbbell&quot;       &quot;avg_roll_dumbbell&quot;       
+## [105] &quot;stddev_roll_dumbbell&quot;     &quot;var_roll_dumbbell&quot;       
+## [107] &quot;avg_pitch_dumbbell&quot;       &quot;stddev_pitch_dumbbell&quot;   
+## [109] &quot;var_pitch_dumbbell&quot;       &quot;avg_yaw_dumbbell&quot;        
+## [111] &quot;stddev_yaw_dumbbell&quot;      &quot;var_yaw_dumbbell&quot;        
+## [113] &quot;gyros_dumbbell_x&quot;         &quot;gyros_dumbbell_y&quot;        
+## [115] &quot;gyros_dumbbell_z&quot;         &quot;accel_dumbbell_x&quot;        
+## [117] &quot;accel_dumbbell_y&quot;         &quot;accel_dumbbell_z&quot;        
+## [119] &quot;magnet_dumbbell_x&quot;        &quot;magnet_dumbbell_y&quot;       
+## [121] &quot;magnet_dumbbell_z&quot;        &quot;roll_forearm&quot;            
+## [123] &quot;pitch_forearm&quot;            &quot;yaw_forearm&quot;             
+## [125] &quot;kurtosis_roll_forearm&quot;    &quot;kurtosis_picth_forearm&quot;  
+## [127] &quot;kurtosis_yaw_forearm&quot;     &quot;skewness_roll_forearm&quot;   
+## [129] &quot;skewness_pitch_forearm&quot;   &quot;skewness_yaw_forearm&quot;    
+## [131] &quot;max_roll_forearm&quot;         &quot;max_picth_forearm&quot;       
+## [133] &quot;max_yaw_forearm&quot;          &quot;min_roll_forearm&quot;        
+## [135] &quot;min_pitch_forearm&quot;        &quot;min_yaw_forearm&quot;         
+## [137] &quot;amplitude_roll_forearm&quot;   &quot;amplitude_pitch_forearm&quot; 
+## [139] &quot;amplitude_yaw_forearm&quot;    &quot;total_accel_forearm&quot;     
+## [141] &quot;var_accel_forearm&quot;        &quot;avg_roll_forearm&quot;        
+## [143] &quot;stddev_roll_forearm&quot;      &quot;var_roll_forearm&quot;        
+## [145] &quot;avg_pitch_forearm&quot;        &quot;stddev_pitch_forearm&quot;    
+## [147] &quot;var_pitch_forearm&quot;        &quot;avg_yaw_forearm&quot;         
+## [149] &quot;stddev_yaw_forearm&quot;       &quot;var_yaw_forearm&quot;         
+## [151] &quot;gyros_forearm_x&quot;          &quot;gyros_forearm_y&quot;         
+## [153] &quot;gyros_forearm_z&quot;          &quot;accel_forearm_x&quot;         
+## [155] &quot;accel_forearm_y&quot;          &quot;accel_forearm_z&quot;         
+## [157] &quot;magnet_forearm_x&quot;         &quot;magnet_forearm_y&quot;        
+## [159] &quot;magnet_forearm_z&quot;         &quot;classe&quot;</code></pre>
+<p>To begin, the data are partitioned into training and validation sets.</p>
+<pre class="r"><code>ind_training &lt;- createDataPartition(pml_training$classe, p = 0.75, list = F)
+training &lt;- pml_training[ind_training, ]
+validation &lt;- pml_training[-ind_training, ]
+
+str(training, list.len = 15)</code></pre>
+<pre><code>## 'data.frame':    14718 obs. of  160 variables:
+##  $ X                       : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ user_name               : Factor w/ 6 levels &quot;adelmo&quot;,&quot;carlitos&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ raw_timestamp_part_1    : int  1323084231 1323084231 1323084231 1323084232 1323084232 1323084232 1323084232 1323084232 1323084232 1323084232 ...
+##  $ raw_timestamp_part_2    : int  788290 808298 820366 120339 196328 304277 368296 440390 484323 484434 ...
+##  $ cvtd_timestamp          : Factor w/ 20 levels &quot;02/12/2011 13:32&quot;,..: 9 9 9 9 9 9 9 9 9 9 ...
+##  $ new_window              : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ num_window              : int  11 11 11 12 12 12 12 12 12 12 ...
+##  $ roll_belt               : num  1.41 1.41 1.42 1.48 1.48 1.45 1.42 1.42 1.43 1.45 ...
+##  $ pitch_belt              : num  8.07 8.07 8.07 8.05 8.07 8.06 8.09 8.13 8.16 8.17 ...
+##  $ yaw_belt                : num  -94.4 -94.4 -94.4 -94.4 -94.4 -94.4 -94.4 -94.4 -94.4 -94.4 ...
+##  $ total_accel_belt        : int  3 3 3 3 3 3 3 3 3 3 ...
+##  $ kurtosis_roll_belt      : Factor w/ 396 levels &quot;0.000673&quot;,&quot;0.005503&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ kurtosis_picth_belt     : Factor w/ 316 levels &quot;0.006078&quot;,&quot;-0.021887&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##  $ kurtosis_yaw_belt       : Factor w/ 1 level &quot;#DIV/0!&quot;: NA NA NA NA NA NA NA NA NA NA ...
+##  $ skewness_roll_belt      : Factor w/ 394 levels &quot;0.000000&quot;,&quot;0.000748&quot;,..: NA NA NA NA NA NA NA NA NA NA ...
+##   [list output truncated]</code></pre>
+<p>A few strategic desicions are made in treating the data. First, we notice that several variables are very sparsely populated. We could impute missing values if there are small gaps, but if the ratio of missing values to non-missing values is high, we will prefer to omit those variables.</p>
+<pre class="r"><code>rows &lt;- nrow(training)
+(na_ratio &lt;- sapply(1:ncol(training), function(x) sum(is.na(training[ , x]))/rows))</code></pre>
+<pre><code>##   [1] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+##   [8] 0.0000000 0.0000000 0.0000000 0.0000000 0.9788694 0.9788694 0.9788694
+##  [15] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [22] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [29] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [36] 0.9788694 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+##  [43] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+##  [50] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [57] 0.9788694 0.9788694 0.9788694 0.0000000 0.0000000 0.0000000 0.0000000
+##  [64] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.9788694 0.9788694
+##  [71] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [78] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.0000000
+##  [85] 0.0000000 0.0000000 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [92] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [99] 0.9788694 0.9788694 0.9788694 0.0000000 0.9788694 0.9788694 0.9788694
+## [106] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+## [113] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+## [120] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.9788694 0.9788694
+## [127] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+## [134] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.0000000
+## [141] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+## [148] 0.9788694 0.9788694 0.9788694 0.0000000 0.0000000 0.0000000 0.0000000
+## [155] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000</code></pre>
+<pre class="r"><code>(nonsparse &lt;- na_ratio &lt; 0.8)</code></pre>
+<pre><code>##   [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+##  [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [23] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [34] FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+##  [45]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [56] FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+##  [67]  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [78] FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE
+##  [89] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [100] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [111] FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+## [122]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [133] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
+## [144] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE
+## [155]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE</code></pre>
+<pre class="r"><code>sum(nonsparse)</code></pre>
+<pre><code>## [1] 60</code></pre>
+<p>There are 100 sparse variables. Eliminating them should make our models simpler and more computationally efficient.</p>
+<p>Secondly, although the data were clearly collected as a time series, as the experimental design and timestamp variables show, we will initially attempt a simplification: discarding all time and individual participant information (the first 7 columns/variables in the data), and instead train our algorithms on the snapshot-like non-sequential view of the data. In the event that this approach fails to produce a sufficient level of performance, a time series approach can be adopted.</p>
+<p>We implement a custom preprocessing function to keep only the non-sparse variables, eliminate the time and individual data, and move the response variable to the first column for convenience.</p>
+<pre class="r"><code>myPreProc &lt;- function(df, keep.cols, skip.cols = 7) {
+    
+    proc_df &lt;- df[ , keep.cols][ , -(1:skip.cols)]
+
+    # put response variable in first column
+    ncols &lt;- ncol(proc_df)
+    proc_df &lt;- proc_df[, c(ncols, 1:(ncols-1))]
+
+    # make all columns numeric
+    proc_df[ , 2:ncols] &lt;- as.data.frame(lapply(proc_df[ , -1], as.numeric))
+    
+    proc_df
+}
+
+pr_training &lt;- myPreProc(training, nonsparse)
+pr_validation &lt;- myPreProc(validation, nonsparse)
+pr_testing &lt;- myPreProc(pml_testing, nonsparse)</code></pre>
+<p>The exact same preprocessing that is done to the training set is also done to the validation and testing sets. Note that the testing set does not contain the response variable (correct classes) but a placeholder index which will ultimately be ignored.</p>
 </div>
 <div id="modeling" class="section level3">
 <h3>Modeling</h3>

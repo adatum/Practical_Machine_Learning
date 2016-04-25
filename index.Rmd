@@ -2,7 +2,7 @@
 title: "Practical Machine Learning:"
 subtitle: "Weight Lifting Exercise Quality Classification"
 author: "adatum"
-date: "April 22, 2016"
+date: "April 25, 2016"
 output: 
     html_document:
         theme: cerulean
@@ -10,6 +10,8 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+library(caret)
+set.seed(42)
 ```
 
 ### Introduction
@@ -19,9 +21,78 @@ The [Weight Lifting Exercises Dataset](http://groupware.les.inf.puc-rio.br/har#w
 
 The goal is to develop machine learning algorithms which correctly classify the quality of the exercise performed given the sensor data. We show here an implementation achieving 99.69% overall classification accuracy.
 
-### Data Exploration
+### Data Exploration and Preprocessing
 
+The training and testing data sets are downloaded and read, if not already present.
 
+```{r import-data}
+if(!exists("pml_training") & !exists("pml_testing")){
+        training_file <- "pml-training.csv"
+        testing_file <- "pml-testing.csv"
+        
+        if(!file.exists(training_file) & !file.exists(testing_file)){
+        training_url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+        testing_url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+        download.file(training_url, training_file, method = "curl")
+        download.file(testing_url, testing_file, method = "curl")
+        }
+        
+        pml_training <- read.csv("pml-training.csv", na.strings = c(NA, ""))
+        pml_testing <- read.csv("pml-testing.csv", na.strings = c(NA, ""))
+}
+
+dim(pml_training)
+names(pml_training)
+```
+
+To begin, the data are partitioned into training and validation sets. 
+
+```{r partition-data}
+ind_training <- createDataPartition(pml_training$classe, p = 0.75, list = F)
+training <- pml_training[ind_training, ]
+validation <- pml_training[-ind_training, ]
+
+str(training, list.len = 15)
+```
+
+A few strategic desicions are made in treating the data. First, we notice that several variables are very sparsely populated. We could impute missing values if there are small gaps, but if the ratio of missing values to non-missing values is high, we will prefer to omit those variables.
+
+```{r missing-values}
+rows <- nrow(training)
+(na_ratio <- sapply(1:ncol(training), function(x) sum(is.na(training[ , x]))/rows))
+(nonsparse <- na_ratio < 0.8)
+sum(nonsparse)
+```
+
+There are `r ncol(training) - sum(nonsparse)` sparse variables. Eliminating them should make our models simpler and more computationally efficient.
+
+Secondly, although the data were clearly collected as a time series, as the experimental design and timestamp variables show, we will initially attempt a simplification: discarding all time and individual participant information (the first 7 columns/variables in the data), and instead train our algorithms on the snapshot-like non-sequential view of the data. In the event that this approach fails to produce a sufficient level of performance, a time series approach can be adopted.
+
+We implement a custom preprocessing function to keep only the non-sparse variables, eliminate the time and individual data, and move the response variable to the first column for convenience.
+
+```{r preproc}
+
+myPreProc <- function(df, keep.cols, skip.cols = 7) {
+    
+    proc_df <- df[ , keep.cols][ , -(1:skip.cols)]
+
+    # put response variable in first column
+    ncols <- ncol(proc_df)
+    proc_df <- proc_df[, c(ncols, 1:(ncols-1))]
+
+    # make all columns numeric
+    proc_df[ , 2:ncols] <- as.data.frame(lapply(proc_df[ , -1], as.numeric))
+    
+    proc_df
+}
+
+pr_training <- myPreProc(training, nonsparse)
+pr_validation <- myPreProc(validation, nonsparse)
+pr_testing <- myPreProc(pml_testing, nonsparse)
+
+```
+
+The exact same preprocessing that is done to the training set is also done to the validation and testing sets. Note that the testing set does not contain the response variable (correct classes) but a placeholder index which will ultimately be ignored.
 
 ### Modeling
 
