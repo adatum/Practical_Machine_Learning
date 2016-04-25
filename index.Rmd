@@ -5,7 +5,8 @@ author: "adatum"
 date: "April 25, 2016"
 output: 
     html_document:
-        theme: cerulean
+      theme: cerulean
+      toc: yes
 ---
 
 ```{r setup, include=FALSE}
