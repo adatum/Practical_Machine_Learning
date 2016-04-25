@@ -1,30 +1,34 @@
 ---
-title: "Practical Machine Learning"
+title: "Practical Machine Learning:"
+subtitle: "Weight Lifting Exercise Quality Classification"
 author: "adatum"
 date: "April 22, 2016"
-output: html_document
+output: 
+    html_document:
+        theme: cerulean
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
-## R Markdown
+### Introduction
+With wearable heath and fitness devices becoming increasingly popular, and correspondingly, the amount of data collected by such devices burgeoning, the question of how to make use of these vast stores of information holds much potential. Many devices report simple aggregate summaries of the quantity of particular activities performed, perhaps in relation to some goal. On the other hand, assessing the quality of the activities is more challenging and may represent significant untapped potential hidden in the data.
 
-Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+The [Weight Lifting Exercises Dataset](http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises) aims to test the feasibility of assessing the quality of weight lifting exercises performed by inexperienced individuals, potentially as a precursor to personalized digital personal trainers. The data were collected by attaching orientation sensors on a dumbbell and the participant's arm, forearm, and belt. They were then instructed to perform 10 sets of unilateral dumbbell biceps curls in one correct and four incorrect ways: "*exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E).*" More details are available at the [researchers' website](http://groupware.les.inf.puc-rio.br/har).
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The goal is to develop machine learning algorithms which correctly classify the quality of the exercise performed given the sensor data. We show here an implementation achieving 99.69% overall classification accuracy.
 
-```{r cars}
-summary(cars)
-```
+### Data Exploration
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+### Modeling
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Results
+
+### Conclusions
+
+
+### References
+Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises](http://groupware.les.inf.puc-rio.br/work.jsf?p1=11201). Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
