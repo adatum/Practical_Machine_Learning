@@ -143,8 +143,8 @@ $(document).ready(function () {
         if(!file.exists(training_file) &amp; !file.exists(testing_file)){
         training_url &lt;- &quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;
         testing_url &lt;- &quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;
-        downloader(training_url, training_file)
-        downloader(testing_url, testing_file)
+        download(training_url, training_file)
+        download(testing_url, testing_file)
         }
         
         pml_training &lt;- read.csv(&quot;pml-training.csv&quot;, na.strings = c(NA, &quot;&quot;))

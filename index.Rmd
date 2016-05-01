@@ -36,8 +36,8 @@ if(!exists("pml_training") & !exists("pml_testing")){
         if(!file.exists(training_file) & !file.exists(testing_file)){
         training_url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
         testing_url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
-        downloader(training_url, training_file)
-        downloader(testing_url, testing_file)
+        download(training_url, training_file)
+        download(testing_url, testing_file)
         }
         
         pml_training <- read.csv("pml-training.csv", na.strings = c(NA, ""))
