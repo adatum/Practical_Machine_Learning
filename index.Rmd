@@ -12,7 +12,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 
-if (!require("pacman")) install.packages("pacman")
+if (!require("pacman")) install.packages("pacman", repos = "http://cran.us.r-project.org")
 pacman::p_load(caret, caretEnsemble, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
 set.seed(42)
 ```
