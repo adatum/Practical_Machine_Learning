@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(caret, caretEnsemble, stargazer, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
+pacman::p_load(caret, caretEnsemble, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
 set.seed(42)
 ```
 
@@ -107,14 +107,29 @@ One approach to modeling is to try many different types of machine learning algo
 mycontrol <- trainControl(method = "cv", number = 5)
 mymethods <- c("bayesglm", "C5.0", "fda", "gbm", "knn",  "qda", "rf", "sda", "svmPoly", "xgbLinear")
     
-start_time <- proc.time()
-model_list <- caretList(x = pr_training[ , -1],
-                        y = pr_training[ , 1],
-                        trControl = mycontrol,
-                        methodList = mymethods
-                        )
+# load models if already trained since training can take several hours
+# if models must be changed, delete "model_list.rds" in working directory
 
-proc.time() - start_time # model training runtime for curiosity
+model_fname <- "model_list.rds"
+if(file.exists(model_fname)){
+    
+    model_list <- readRDS(model_fname)
+    
+} else {
+
+    start_time <- proc.time()
+    model_list <- caretList(x = pr_training[ , -1],
+                            y = pr_training[ , 1],
+                            trControl = mycontrol,
+                            methodList = mymethods
+                            )
+    
+    # model training runtime for curiosity
+    proc.time() - start_time 
+
+    #save models to speed up 
+    saveRDS(model_list, model_fname)
+}
 
 dotplot(resamples(model_list))
 ```
@@ -142,7 +157,7 @@ Considering the high accuracies achieved we will apply the models to the test se
 ```{r model-results}
 results <- as.data.frame(lapply(model_list, function(x) predict(x, newdata = pr_testing[ , -1])))
 results$ensemble <- apply(results, 1, function(x) names(which.max(table(x))))
-stargazer(results, header = F)
+results
 ```
 
 The ensemble result is used as our predictions for the test data set. We see that `r sum(sapply(results[, -11], function(x) all(x == results$ensemble)))` of the models agree completely with each other and the ensemble result, which gives us more confidence in the predictions. 

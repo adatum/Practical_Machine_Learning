@@ -16,3 +16,4 @@ vignettes/*.pdf
 *.Rproj
 *.csv
 index_cache/*
+*.rds
