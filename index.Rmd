@@ -20,7 +20,7 @@ set.seed(42)
 ### Introduction
 With wearable heath and fitness devices becoming increasingly popular, and correspondingly, the amount of data collected by such devices burgeoning, the question of how to make use of these vast stores of information holds much potential. Many devices report simple aggregate summaries of the quantity of particular activities performed, perhaps in relation to some goal. On the other hand, assessing the quality of the activities is more challenging and may represent significant untapped potential hidden in the data.
 
-The [Weight Lifting Exercises Dataset](http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises) aims to test the feasibility of assessing the quality of weight lifting exercises performed by inexperienced individuals, potentially as a precursor to personalized digital personal trainers. The data were collected by attaching orientation sensors on a dumbbell and the participant's arm, forearm, and belt. They were then instructed to perform 10 sets of unilateral dumbbell biceps curls in one correct and four incorrect ways: "*exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E).*" More details are available at the [researchers' website](http://groupware.les.inf.puc-rio.br/har).
+The [Weight Lifting Exercises Dataset](http://groupware.les.inf.puc-rio.br/har#weight_lifting_exercises) aims to test the feasibility of assessing the quality of weight lifting exercises performed by inexperienced individuals, potentially as a precursor to personalized digital personal trainers. The data were collected by attaching sensors on a dumbbell and the participant's arm, forearm, and belt. They were then instructed to perform 10 repetitions of unilateral dumbbell biceps curls in one correct and four incorrect ways: "*exactly according to the specification (Class A), throwing the elbows to the front (Class B), lifting the dumbbell only halfway (Class C), lowering the dumbbell only halfway (Class D) and throwing the hips to the front (Class E).*" More details are available at the [researchers' website](http://groupware.les.inf.puc-rio.br/har).
 
 The goal is to develop machine learning algorithms which correctly classify the quality of the exercise performed given the sensor data.
 
@@ -48,7 +48,7 @@ dim(pml_training)
 names(pml_training)
 ```
 
-To begin, the data are partitioned into training and validation sets. 
+Before any exploration, the data are first partitioned into training and validation sets, with the validation set left aside to prevent making any analysis decisions on what should be treated as "unseen" data at this point. 
 
 ```{r partition-data}
 ind_training <- createDataPartition(pml_training$classe, p = 0.75, list = F)
@@ -127,14 +127,14 @@ if(file.exists(model_fname)){
     # model training runtime for curiosity
     proc.time() - start_time 
 
-    #save models to speed up 
+    #save models to speed up later analyses
     saveRDS(model_list, model_fname)
 }
 
 dotplot(resamples(model_list))
 ```
 
-The plot shows promising performance for several of the models.
+The plot shows promising performance for several of the models. Both the accuracy and the kappa score (which tries to account for class imbalances) of the models look good on resampled training data.
 
 Next, the built models are used to make predictions on the validation set to obtain our best unbiased estimates of model performance on unseen data. This also helps to make sure we do not have high variance (overfitting) issues. These results guide the decision of which model(s) to use in the future.
 
@@ -144,7 +144,7 @@ pred_list <- lapply(model_list, function(x) predict(x, newdata = pr_validation[ 
 
 ```
 
-Several of the models have high accuracies, with `r print(unlist(strsplit(names(accuracy[1]), split = "\\."))[1], quote = F)` having the highest. Furthermore, the confusion matrix indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.
+Several of the models have high accuracies, with `r unlist(strsplit(names(accuracy[1]), split = "\\."))[1]` having the highest. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.
 
 ```{r model-confusionmatrix}
 confusionMatrix(pred_list$xgbLinear, pr_validation[ , 1])
@@ -164,7 +164,7 @@ The ensemble result is used as our predictions for the test data set. We see tha
 
 ### Conclusions
 
-We have have deployed ten machine learning algorithms using motion sensor data to classify the quality and correctness of exercises performed by individuals. The best performing model was `r print(unlist(strsplit(names(accuracy[1]), split = "\\."))[1], quote = F)` with `r round(accuracy[[1]], 3)*100`% accuracy. The predictions from all ten models were ensembled together for a more robust performance. 
+We have have deployed ten machine learning algorithms using motion sensor data to classify the quality and correctness of exercises performed by individuals. The best performing model was `r unlist(strsplit(names(accuracy[1]), split = "\\."))[1]` with `r round(accuracy[[1]], 3)*100`% accuracy. The predictions from all ten models were ensembled together for a more robust performance. 
 
 Although the performance is sufficient for this application, a more thorough exploration of the models' parameters could possibly further improve performance and/or reduce computational time by finding equivalently performing simpler models or improving convergence rates. Also, ensembling could use other strategies such as averaging the prediction probabilities from the individual models. Model stacking is also an option, applying another machine learning algorithm to the data set of individual model results to obtain the final predictions.
 
