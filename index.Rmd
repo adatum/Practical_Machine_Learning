@@ -13,7 +13,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 
 if (!require("pacman")) install.packages("pacman", repos = "http://cran.us.r-project.org")
-pacman::p_load(RCurl, caret, caretEnsemble, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
+pacman::p_load(downloader, caret, caretEnsemble, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
 set.seed(42)
 ```
 
@@ -36,8 +36,8 @@ if(!exists("pml_training") & !exists("pml_testing")){
         if(!file.exists(training_file) & !file.exists(testing_file)){
         training_url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
         testing_url <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
-        download.file(training_url, training_file, method = "curl")
-        download.file(testing_url, testing_file, method = "curl")
+        downloader(training_url, training_file)
+        downloader(testing_url, testing_file)
         }
         
         pml_training <- read.csv("pml-training.csv", na.strings = c(NA, ""))
