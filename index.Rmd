@@ -12,8 +12,15 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 
+# load required libraries, installing if needed
 if (!require("pacman")) install.packages("pacman", repos = "http://cran.us.r-project.org")
-pacman::p_load(downloader, caret, caretEnsemble, e1071, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
+pacman::p_load(parallel, doParallel, downloader, caret, caretEnsemble, e1071, arm, C50, plyr, earth, mda, gbm, MASS, randomForest, sda, kernlab, xgboost)
+
+# setup parallel computing
+cluster <- makeCluster(detectCores() - 1) # leave 1 core for OS
+registerDoParallel(cluster)
+
+# set seed for reproducibility 
 set.seed(42)
 ```
 
@@ -103,7 +110,7 @@ One approach to modeling is to try many different types of machine learning algo
 
 5-fold cross-validation is used for choosing model parameters. The training data set is split into 5 stratified groups, with the model trained on 4 of them, and the model's performance tested on the remaining group. The groups are then rotated until each group has been used for testing. Often for better model performance, 10-fold repeated cross-validation is suggested, however, here we begin with 5-fold non-repeated cross-validation in the interest of computational speed, and we will consider more stringent methods if the results indicate the need. `caret` automatically tries several parameter combinations (as required by the model) to build the optimal model. If this fails to produce good results we can later specify the number and values of parameters to try.
 
-```{r model-train}
+```{r model-train, message=F, warning=F}
 mycontrol <- trainControl(method = "cv", number = 5)
 mymethods <- c("bayesglm", "C5.0", "fda", "gbm", "knn",  "qda", "rf", "sda", "svmPoly", "xgbLinear")
     
@@ -125,7 +132,7 @@ if(file.exists(model_fname)){
                             )
     
     # model training runtime for curiosity
-    proc.time() - start_time 
+    print(proc.time() - start_time)
 
     #save models to speed up later analyses
     saveRDS(model_list, model_fname)
@@ -138,7 +145,7 @@ The plot shows promising performance for several of the models. Both the accurac
 
 Next, the built models are used to make predictions on the validation set to obtain our best unbiased estimates of model performance on unseen data. This also helps to make sure we do not have high variance (overfitting) issues. These results guide the decision of which model(s) to use in the future.
 
-```{r model-performance}
+```{r model-performance, message=F, warning=F}
 pred_list <- lapply(model_list, function(x) predict(x, newdata = pr_validation[ , -1]))
 (accuracy <- sort(sapply(pred_list, function(x) confusionMatrix(x, pr_validation[ , 1])$overall[1]), decreasing = T))
 
@@ -171,3 +178,8 @@ Although the performance is sufficient for this application, a more thorough exp
 
 ### References
 Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H. [Qualitative Activity Recognition of Weight Lifting Exercises](http://groupware.les.inf.puc-rio.br/work.jsf?p1=11201). Proceedings of 4th International Conference in Cooperation with SIGCHI (Augmented Human '13) . Stuttgart, Germany: ACM SIGCHI, 2013.
+
+```{r housekeeping, include=F}
+stopCluster(cluster)
+```
+
