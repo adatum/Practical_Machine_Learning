@@ -369,7 +369,7 @@ dotplot(resamples(model_list))</code></pre>
 ##          0.8998777          0.7006525          0.6851550 
 ##  bayesglm.Accuracy 
 ##          0.4013051</code></pre>
-<p>Several of the models have high accuracies, with xgbLinear having the highest. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.</p>
+<p>Several of the models have high accuracies, with xgbLinear having the highest at 99.8%. Equivalently, the out-of-sample, or generalization, error is estimated at 0.2%. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.</p>
 <pre class="r"><code>confusionMatrix(pred_list$xgbLinear, pr_validation[ , 1])</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 

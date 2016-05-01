@@ -144,7 +144,7 @@ pred_list <- lapply(model_list, function(x) predict(x, newdata = pr_validation[ 
 
 ```
 
-Several of the models have high accuracies, with `r unlist(strsplit(names(accuracy[1]), split = "\\."))[1]` having the highest. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.
+Several of the models have high accuracies, with `r unlist(strsplit(names(accuracy[1]), split = "\\."))[1]` having the highest at `r round(accuracy[[1]], 3)*100`%. Equivalently, the out-of-sample, or generalization, error is estimated at `r round(1 - accuracy[1], 3)*100`%. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.
 
 ```{r model-confusionmatrix}
 confusionMatrix(pred_list$xgbLinear, pr_validation[ , 1])
