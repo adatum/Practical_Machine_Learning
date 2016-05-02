@@ -172,9 +172,12 @@ confusionMatrix(pred_list$xgbLinear, pr_validation[ , 1])
 
 Considering the high accuracies achieved we will apply the models to the test set. Instead of picking only one model with the highest accuracy, it is interesting to see to what extent the different models agree with each other. We can also use an simple ensembling strategy of unweighted votes to make more robust predictions.
 
-```{r model-results}
+```{r model-results, results="hide"}
 results <- as.data.frame(lapply(model_list, function(x) predict(x, newdata = pr_testing[ , -1])))
 results$ensemble <- apply(results, 1, function(x) names(which.max(table(x))))
+```
+
+```{r print-results}
 results
 ```
 

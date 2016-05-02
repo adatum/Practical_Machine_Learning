@@ -261,27 +261,27 @@ str(training, list.len = 15)</code></pre>
 <pre class="r"><code>rows &lt;- nrow(training)
 (na_ratio &lt;- sapply(1:ncol(training), function(x) sum(is.na(training[ , x]))/rows))</code></pre>
 <pre><code>##   [1] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
-##   [8] 0.0000000 0.0000000 0.0000000 0.0000000 0.9788694 0.9788694 0.9788694
-##  [15] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [22] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [29] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [36] 0.9788694 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
+##   [8] 0.0000000 0.0000000 0.0000000 0.0000000 0.9798206 0.9798206 0.9798206
+##  [15] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [22] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [29] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [36] 0.9798206 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
 ##  [43] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
-##  [50] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [57] 0.9788694 0.9788694 0.9788694 0.0000000 0.0000000 0.0000000 0.0000000
-##  [64] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.9788694 0.9788694
-##  [71] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [78] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.0000000
-##  [85] 0.0000000 0.0000000 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [92] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-##  [99] 0.9788694 0.9788694 0.9788694 0.0000000 0.9788694 0.9788694 0.9788694
-## [106] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
+##  [50] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [57] 0.9798206 0.9798206 0.9798206 0.0000000 0.0000000 0.0000000 0.0000000
+##  [64] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.9798206 0.9798206
+##  [71] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [78] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.0000000
+##  [85] 0.0000000 0.0000000 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [92] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+##  [99] 0.9798206 0.9798206 0.9798206 0.0000000 0.9798206 0.9798206 0.9798206
+## [106] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
 ## [113] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000
-## [120] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.9788694 0.9788694
-## [127] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-## [134] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.0000000
-## [141] 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694 0.9788694
-## [148] 0.9788694 0.9788694 0.9788694 0.0000000 0.0000000 0.0000000 0.0000000
+## [120] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.9798206 0.9798206
+## [127] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+## [134] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.0000000
+## [141] 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206 0.9798206
+## [148] 0.9798206 0.9798206 0.9798206 0.0000000 0.0000000 0.0000000 0.0000000
 ## [155] 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000 0.0000000</code></pre>
 <pre class="r"><code>(nonsparse &lt;- na_ratio &lt; 0.8)</code></pre>
 <pre><code>##   [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
@@ -362,54 +362,53 @@ dotplot(resamples(model_list))</code></pre>
 <pre class="r"><code>pred_list &lt;- lapply(model_list, function(x) predict(x, newdata = pr_validation[ , -1]))</code></pre>
 <pre class="r"><code>(accuracy &lt;- sort(sapply(pred_list, function(x) confusionMatrix(x, pr_validation[ , 1])$overall[1]), decreasing = TRUE))</code></pre>
 <pre><code>## xgbLinear.Accuracy      C5.0.Accuracy        rf.Accuracy 
-##          0.9983687          0.9981648          0.9975530 
+##          0.9971452          0.9953100          0.9946982 
 ##   svmPoly.Accuracy       gbm.Accuracy       knn.Accuracy 
-##          0.9959217          0.9696166          0.9445351 
+##          0.9934747          0.9647227          0.9119086 
 ##       qda.Accuracy       sda.Accuracy       fda.Accuracy 
-##          0.8998777          0.7006525          0.6851550 
+##          0.8941680          0.7002447          0.6831158 
 ##  bayesglm.Accuracy 
-##          0.4013051</code></pre>
-<p>Several of the models have high accuracies, with xgbLinear having the highest at 99.8%. Equivalently, the out-of-sample, or generalization, error is estimated at 0.2%. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.</p>
+##          0.4023246</code></pre>
+<p>Several of the models have high accuracies, with xgbLinear having the highest at 99.7%. Equivalently, the out-of-sample, or generalization, error is estimated at 0.3%. Furthermore, the confusion matrix, below, indicates the accuracy is consistently high across all classes. Interestingly, it performs perfectly on Class A, which is the class for the weight lifting exercise performed correctly. This means that when an individual performs the exercise well, it is very unlikely for the model to flag it as incorrect, which would be quite frustrating for the user.</p>
 <pre class="r"><code>confusionMatrix(pred_list$xgbLinear, pr_validation[ , 1])</code></pre>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
 ## Prediction    A    B    C    D    E
 ##          A 1395    1    0    0    0
-##          B    0  946    1    0    0
-##          C    0    2  854    2    1
-##          D    0    0    0  802    1
+##          B    0  946    3    0    0
+##          C    0    2  850    4    1
+##          D    0    0    2  800    1
 ##          E    0    0    0    0  899
 ## 
 ## Overall Statistics
 ##                                           
-##                Accuracy : 0.9984          
-##                  95% CI : (0.9968, 0.9993)
+##                Accuracy : 0.9971          
+##                  95% CI : (0.9952, 0.9984)
 ##     No Information Rate : 0.2845          
 ##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
 ##                                           
-##                   Kappa : 0.9979          
+##                   Kappa : 0.9964          
 ##  Mcnemar's Test P-Value : NA              
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: A Class: B Class: C Class: D Class: E
-## Sensitivity            1.0000   0.9968   0.9988   0.9975   0.9978
-## Specificity            0.9997   0.9997   0.9988   0.9998   1.0000
-## Pos Pred Value         0.9993   0.9989   0.9942   0.9988   1.0000
-## Neg Pred Value         1.0000   0.9992   0.9998   0.9995   0.9995
+## Sensitivity            1.0000   0.9968   0.9942   0.9950   0.9978
+## Specificity            0.9997   0.9992   0.9983   0.9993   1.0000
+## Pos Pred Value         0.9993   0.9968   0.9918   0.9963   1.0000
+## Neg Pred Value         1.0000   0.9992   0.9988   0.9990   0.9995
 ## Prevalence             0.2845   0.1935   0.1743   0.1639   0.1837
-## Detection Rate         0.2845   0.1929   0.1741   0.1635   0.1833
-## Detection Prevalence   0.2847   0.1931   0.1752   0.1637   0.1833
-## Balanced Accuracy      0.9999   0.9983   0.9988   0.9986   0.9989</code></pre>
+## Detection Rate         0.2845   0.1929   0.1733   0.1631   0.1833
+## Detection Prevalence   0.2847   0.1935   0.1748   0.1637   0.1833
+## Balanced Accuracy      0.9999   0.9980   0.9962   0.9971   0.9989</code></pre>
 </div>
 <div id="results" class="section level3">
 <h3>Results</h3>
 <p>Considering the high accuracies achieved we will apply the models to the test set. Instead of picking only one model with the highest accuracy, it is interesting to see to what extent the different models agree with each other. We can also use an simple ensembling strategy of unweighted votes to make more robust predictions.</p>
-<pre class="r"><code>results &lt;- as.data.frame(lapply(model_list, function(x) predict(x, newdata = pr_testing[ , -1])))</code></pre>
-<pre><code>## Prediction uses 52 features.</code></pre>
-<pre class="r"><code>results$ensemble &lt;- apply(results, 1, function(x) names(which.max(table(x))))
-results</code></pre>
+<pre class="r"><code>results &lt;- as.data.frame(lapply(model_list, function(x) predict(x, newdata = pr_testing[ , -1])))
+results$ensemble &lt;- apply(results, 1, function(x) names(which.max(table(x))))</code></pre>
+<pre class="r"><code>results</code></pre>
 <pre><code>##    bayesglm C5.0 fda gbm knn qda rf sda svmPoly xgbLinear ensemble
 ## 1         B    B   D   B   B   A  B   B       B         B        B
 ## 2         A    A   A   A   A   A  A   A       A         A        A
@@ -435,7 +434,7 @@ results</code></pre>
 </div>
 <div id="conclusions" class="section level3">
 <h3>Conclusions</h3>
-<p>We have have deployed ten machine learning algorithms using motion sensor data to classify the quality and correctness of exercises performed by individuals. The best performing model was xgbLinear with 99.8% accuracy. The predictions from all ten models were ensembled together for a more robust performance.</p>
+<p>We have have deployed ten machine learning algorithms using motion sensor data to classify the quality and correctness of exercises performed by individuals. The best performing model was xgbLinear with 99.7% accuracy. The predictions from all ten models were ensembled together for a more robust performance.</p>
 <p>Although the performance is sufficient for this application, a more thorough exploration of the models’ parameters could possibly further improve performance and/or reduce computational time by finding equivalently performing simpler models or improving convergence rates. Also, ensembling could use other strategies such as averaging the prediction probabilities from the individual models. Model stacking is also an option, applying another machine learning algorithm to the data set of individual model results to obtain the final predictions.</p>
 </div>
 <div id="references" class="section level3">
